@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Set the number of iterations to use when generating the Mandelbrot set
-num_iterations = 200
+num_iterations = 100
 
 # Set the range of x and y values to use when generating the Mandelbrot set
-x_min, x_max, y_min, y_max = -2, 1, -1.5, 1.5
+x_min, x_max, y_min, y_max = -2, 2, -2, 2
 
 # Generate a 2D array of complex numbers representing the points in the image
 x_values = np.linspace(x_min, x_max, 1000)
@@ -16,11 +16,19 @@ C = X + 1j * Y
 # Generate the Mandelbrot set using the complex numbers in C
 M = np.zeros(C.shape, dtype=np.int32)
 for i in range(num_iterations):
-    mask = (M == 0) & (abs(C) < 2)
-    M[mask] = i
-    C[mask] = C[mask] ** 2 + C
+    if M.all() == 0:
+        mask = (abs(C) <= 2)
+        M[mask] = i
+        C[mask] = C[mask] ** 2 + C[mask]
+    else:
+        mask = (abs(C) <= 2)
+        C[mask] = C[mask] ** 2 + C[mask]
+        M[mask] = i
 
-# Display the Mandelbrot set
-plt.imshow(M, cmap='gist_ncar', extent=(x_min, x_max, y_min, y_max))
+# Display the Mandelbrot set using a color map based on the number of iterations
+plt.imshow(M, cmap='viridis', extent=(x_min, x_max, y_min, y_max))
+plt.colorbar()
+plt.title('Fraktal Set')
+plt.xlabel('Re(c)')
+plt.ylabel('Im(c)')
 plt.show()
-
